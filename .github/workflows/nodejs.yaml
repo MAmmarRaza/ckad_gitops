@@ -1,0 +1,65 @@
+name: Node.js CI/CD with Docker
+
+on:
+  push:
+    branches:
+      - test
+  pull_request:
+    branches:
+      - test
+      
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      run: npm install
+
+  docker:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build Docker image
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/blog:${{ github.sha }} .
+
+    - name: Push Docker image to Docker Hub
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/blog:${{ github.sha }}
+
+  update-k8s-files-for-argocd-to-get-update-tagged-image:
+    needs: docker
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Update image tag in Kubernetes deployment files
+      run: |
+        sed -i "s|image: mammarraza/blog:latest|image: mammarraza/blog:${{ github.sha }}|g" ckad_gitops/v4/deployment-blog.yaml
+
+    - name: Commit and push changes
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add ckad_gitops/v4/deployment-blog.yaml
+        git commit -m "Update image tag to ${{ github.sha }}"
+        git push origin test

@@ -1,0 +1,23 @@
+version: 0.2
+os: linux
+files:
+  - source: /
+    destination: /home/ubuntu/NodeJsProjectCMS
+    overwrite: true
+file_exists_behavior: OVERWRITE
+branch_config:
+    wip\/.*: ~ 
+    main:
+        deploymentGroupName: ammar-deployment-group
+        deploymentGroupConfig:
+            serviceRoleArn: arn:aws:iam::533267208345:role/code-deploy
+# hooks:
+#   BeforeInstall:
+#     - location: deploy/application_start.sh
+#       timeout: 300
+#       runas: root
+#   AfterInstall:
+#     - location: deploy/after_install.sh
+#       timeout: 300
+#       runas: root
+
