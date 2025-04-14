@@ -61,6 +61,6 @@ jobs:
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add NodeJsProjectCMS/v4/deployment-blog.yaml
+        git add ckad_gitops/v4/deployment-blog.yaml
         git commit -m "Update image tag to ${{ github.sha }}"
         git push
