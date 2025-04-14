@@ -3,12 +3,11 @@ name: Node.js CI/CD with Docker
 on:
   push:
     branches:
-      - main
+      - test
   pull_request:
     branches:
-      - main
-  env:
-    IMAGE_TAG: ${{ github.sha }}
+      - test
+      
 jobs:
   build:
     runs-on: ubuntu-latest
