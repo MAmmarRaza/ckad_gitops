@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: blog
-        image: mammarraza/blog:64e17207caef8aae246b0a1d3c3caf144342fb01
+        image: mammarraza/blog:47e2b1d6869e5ec4e2c3270bf79a9295269bb0eb
         ports:
         - containerPort: 5000
         env:
